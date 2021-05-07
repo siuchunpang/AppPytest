@@ -11,7 +11,7 @@ logging.basicConfig(filename=log_path + "\\%s.log" % time.strftime('%Y_%m_%d'),
                     format='%(asctime)s-%(filename)s-%(levelname)s:%(message)s',
                     level=logging.INFO)
 
-
+'''
 def connect_camera():
     poco("com.fdage.eight:id/iv_scene_local").click()
     sleep(2)
@@ -47,7 +47,7 @@ def connect_camera():
     else:
         logging.info("app已连接相机，相机未联网")
         logging.info("进入拍摄页面")
-
+'''
 
 """
 参数设定：
@@ -234,3 +234,70 @@ def connect_wifi():
     poco(text="已连接").wait_for_appearance(15)
     poco("向上导航").click()
     sleep(2.0)
+
+
+def connect_camera():
+    """连接相机"""
+    poco("com.fdage.eight:id/iv_my").click()
+    sleep(2.0)
+    poco("com.fdage.eight:id/tv_battery").click()
+    sleep(2.0)
+    while not poco(text=camera_name).exists():
+        poco("com.android.settings:id/list").swipe([-0.0152, -0.4633])
+        sleep(2.0)
+        if poco(text=camera_name).exists():
+            sleep(2.0)
+            break
+    poco(text=camera_name).click()
+    sleep(2.0)
+    if poco("android:id/button1").exists():
+        poco("android:id/button1").click()
+        sleep(1.0)
+    elif poco("com.android.settings:id/password", text="密码").exists():
+        poco("com.android.settings:id/password").set_text("")
+        poco("com.android.settings:id/password").set_text("12345678")
+        sleep(1.0)
+        poco(text="连接").click()
+        sleep(1.0)
+    else:
+        poco("android:id/button3").click()
+        sleep(1.0)
+    sleep(5.0)
+    poco(text="已连接 (不可上网)").wait_for_appearance(15)
+    poco("向上导航").click()
+    sleep(2.0)
+    poco("com.fdage.eight:id/iv_scene_local").click()
+    sleep(2)
+    poco("com.fdage.eight:id/floatingBtn").click()
+    sleep(2)
+
+    # 判断是否有引导语，有就跳过
+    if poco("com.fdage.eight:id/tv_title", text="拍摄场景（1/5）").exists():
+        poco("com.fdage.eight:id/tv_cancel").click()
+        sleep(2)
+    # 判断
+    if poco("com.fdage.eight:id/container").exists() and poco("com.fdage.eight:id/tv_content", text="拍摄项目会断开相机网络"):
+        logging.info("app已连接相机，相机已联网")
+        poco("com.fdage.eight:id/tv_ok").click()
+        sleep(2)
+        logging.info("进入拍摄页面，相机已断网")
+    elif poco("com.fdage.eight:id/disconnect_dialog_ok").exists():
+        logging.info("app未连接相机")
+        poco("com.fdage.eight:id/disconnect_dialog_ok", text="去连接相机").click()
+        sleep(2)
+        if poco("com.android.settings:id/switch_widget").attr('checked') == False:
+            poco("com.android.settings:id/switch_widget").click()
+            sleep(2)
+        poco("android:id/title", text=camera_name).wait_for_appearance(10)
+        poco("android:id/title", text=camera_name).click()
+        sleep(2)
+        poco("android:id/button1").click()
+        sleep(2)
+        logging.info("正在连接相机...")
+        poco(name="向上导航").click()
+        sleep(2)
+        poco("com.fdage.eight:id/disconnect_dialog_ok").wait_for_disappearance(10)
+        logging.info("app已连接相机" + camera_name)
+    else:
+        logging.info("app已连接相机，相机未联网")
+        logging.info("进入拍摄页面")

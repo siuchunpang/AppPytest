@@ -43,7 +43,6 @@ def test_param_check(ini):
 
 def test_timer_check(ini):
     # 测试用例3713，设置定时器1s/30s/关闭
-    connect_camera()
     param(rl=False, timer=-0.26)
     assert_equal(poco("com.fdage.eight:id/tv_timer").get_text(), "1s")
     poco("com.fdage.eight:id/iv_camset").click()
@@ -66,7 +65,6 @@ def test_timer_check(ini):
 
 def test_shoot_rl(ini):
     # 测试用例3707,3704,3460,3703，左右拍摄/自动hdr/左右拍摄中途关闭
-    connect_camera()
     param(rl=True, hdr="auto")
     poco("com.fdage.eight:id/ic_shot").click()
     sleep(2)
@@ -80,7 +78,6 @@ def test_shoot_rl(ini):
 
 def test_shoot_sync(ini):
     # 测试用例3293,3706,3375，同步拍摄/关闭hdr
-    connect_camera()
     param(rl=False, hdr="off")
     shoot(rl=False)
     save_scene("t_shoot_sync")
@@ -88,7 +85,6 @@ def test_shoot_sync(ini):
 
 def test_shoot_sync_hdr(ini):
     # 测试用例3376，同步拍摄/开启hdr
-    connect_camera()
     param(rl=False, hdr="on")
     shoot(rl=False)
     save_scene("t_shoot_hdr")
